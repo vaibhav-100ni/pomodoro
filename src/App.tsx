@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+// Standard React CSS import instead of styled-jsx
+import './PomodoroStyles.css'; // You'll need to create this CSS file separately
+
 interface Subject {
   id: string;
   name: string;
@@ -78,7 +81,7 @@ const PomodoroStudyApp: React.FC = () => {
       interval = window.setInterval(() => {
         setTimeLeft(prevTime => {
           if (prevTime <= 1) {
-            clearInterval(interval);
+            if (interval) clearInterval(interval);
             // Switch modes when timer ends
             if (mode === 'study') {
               const newCycles = cycles + 1;
@@ -115,8 +118,6 @@ const PomodoroStudyApp: React.FC = () => {
           return prevTime - 1;
         });
       }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
     }
     
     return () => {
@@ -188,6 +189,13 @@ const PomodoroStudyApp: React.FC = () => {
     return suggestions[Math.floor(Math.random() * suggestions.length)];
   };
 
+  // Handle Enter key press in input field
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      addSubject();
+    }
+  };
+
   return (
     <div className="app-container">
       <h1>Study Timer with Spaced Repetition</h1>
@@ -200,10 +208,10 @@ const PomodoroStudyApp: React.FC = () => {
         </div>
         
         <div className="timer-controls">
-          <button className="control-btn" onClick={toggleTimer}>
+          <button className="control-btn primary-btn" onClick={toggleTimer}>
             {isActive ? 'Pause' : 'Start'}
           </button>
-          <button className="control-btn" onClick={resetTimer}>Reset</button>
+          <button className="control-btn secondary-btn" onClick={resetTimer}>Reset</button>
         </div>
         
         {mode === 'break' && (
@@ -266,6 +274,7 @@ const PomodoroStudyApp: React.FC = () => {
             placeholder="Add new subject"
             value={newSubject}
             onChange={(e) => setNewSubject(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <select 
             value={selectedDifficulty}
@@ -315,262 +324,6 @@ const PomodoroStudyApp: React.FC = () => {
           </ul>
         </div>
       )}
-      
-      <style>{`
-        .app-container {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-          color: #333;
-        }
-        
-        h1 {
-          text-align: center;
-          color: #2c3e50;
-          margin-bottom: 30px;
-        }
-        
-        h2 {
-          color: #3498db;
-          border-bottom: 2px solid #ecf0f1;
-          padding-bottom: 10px;
-          margin-top: 30px;
-        }
-        
-        .timer-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin-bottom: 30px;
-        }
-        
-        .timer-display {
-          text-align: center;
-          padding: 30px;
-          border-radius: 10px;
-          margin-bottom: 20px;
-          width: 100%;
-          max-width: 300px;
-        }
-        
-        .timer-display.study {
-          background-color: #e8f4fd;
-          border: 2px solid #3498db;
-        }
-        
-        .timer-display.break {
-          background-color: #e8f8e8;
-          border: 2px solid #2ecc71;
-        }
-        
-        .time {
-          font-size: 3rem;
-          font-weight: bold;
-          margin: 20px 0;
-        }
-        
-        .cycle-count {
-          font-weight: bold;
-          color: #7f8c8d;
-        }
-        
-        .timer-controls {
-          display: flex;
-          gap: 15px;
-        }
-        
-        .control-btn {
-          padding: 10px 25px;
-          font-size: 1rem;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-        
-        .control-btn:first-child {
-          background-color: #3498db;
-          color: white;
-        }
-        
-        .control-btn:first-child:hover {
-          background-color: #2980b9;
-        }
-        
-        .control-btn:last-child {
-          background-color: #e74c3c;
-          color: white;
-        }
-        
-        .control-btn:last-child:hover {
-          background-color: #c0392b;
-        }
-        
-        .break-suggestion {
-          background-color: #f9f9f9;
-          border-left: 4px solid #2ecc71;
-          padding: 15px;
-          margin-top: 20px;
-          border-radius: 5px;
-        }
-        
-        .break-suggestion h3 {
-          margin-top: 0;
-          color: #2ecc71;
-        }
-        
-        .settings-container {
-          background-color: #f9f9f9;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 30px;
-        }
-        
-        .setting-group {
-          margin-bottom: 15px;
-        }
-        
-        .setting-group label {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        
-        .setting-group input {
-          width: 80px;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-        
-        .subjects-container {
-          background-color: #f9f9f9;
-          padding: 20px;
-          border-radius: 8px;
-        }
-        
-        .add-subject {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-        
-        .add-subject input {
-          flex: 1;
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-        
-        .add-subject select {
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-        
-        .add-subject button {
-          padding: 10px 15px;
-          background-color: #3498db;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        
-        .add-subject button:hover {
-          background-color: #2980b9;
-        }
-        
-        .subject-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        
-        .no-subjects {
-          text-align: center;
-          color: #7f8c8d;
-          font-style: italic;
-        }
-        
-        .subject-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px;
-          background-color: white;
-          border-radius: 5px;
-          cursor: pointer;
-          border-left: 4px solid transparent;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        .subject-item:hover {
-          background-color: #f5f5f5;
-        }
-        
-        .subject-item.selected {
-          border-left-color: #3498db;
-          background-color: #e8f4fd;
-        }
-        
-        .subject-name {
-          font-weight: bold;
-          flex: 1;
-        }
-        
-        .difficulty-badge {
-          padding: 5px 10px;
-          border-radius: 20px;
-          font-size: 0.8rem;
-          color: white;
-          margin: 0 10px;
-        }
-        
-        .difficulty-badge.easy {
-          background-color: #2ecc71;
-        }
-        
-        .difficulty-badge.medium {
-          background-color: #f39c12;
-        }
-        
-        .difficulty-badge.hard {
-          background-color: #e74c3c;
-        }
-        
-        .review-status {
-          font-size: 0.8rem;
-          color: #7f8c8d;
-        }
-        
-        .review-notifications {
-          margin-top: 30px;
-          padding: 15px;
-          background-color: #ffe9e3;
-          border-left: 4px solid #e74c3c;
-          border-radius: 5px;
-        }
-        
-        .review-notifications h3 {
-          color: #e74c3c;
-          margin-top: 0;
-        }
-        
-        .review-notifications ul {
-          padding-left: 20px;
-        }
-        
-        .review-notifications li {
-          margin-bottom: 5px;
-          cursor: pointer;
-        }
-        
-        .review-notifications li:hover {
-          text-decoration: underline;
-        }
-      `}</style>
     </div>
   );
 };
