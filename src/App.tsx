@@ -72,13 +72,13 @@ const PomodoroStudyApp: React.FC = () => {
 
   // Timer logic
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: number | undefined = undefined;
     
     if (isActive) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setTimeLeft(prevTime => {
           if (prevTime <= 1) {
-            clearInterval(interval!);
+            clearInterval(interval);
             // Switch modes when timer ends
             if (mode === 'study') {
               const newCycles = cycles + 1;
@@ -316,7 +316,7 @@ const PomodoroStudyApp: React.FC = () => {
         </div>
       )}
       
-      <style jsx>{`
+      <style>{`
         .app-container {
           max-width: 800px;
           margin: 0 auto;
